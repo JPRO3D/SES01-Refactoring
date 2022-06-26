@@ -30,8 +30,10 @@ public class EnrollCtrl {
             }
         }
 
-        if ((getGpa(points, totalUnits) < 12 && unitsRequested > 14) || (getGpa(points, totalUnits) < 16 && unitsRequested > 16) || (unitsRequested > 20))
-            throw new EnrollmentRulesViolationException(String.format("Number of units (%d) requested does not match GPA of %f", unitsRequested, getGpa(points, totalUnits)));
+        if ((getGpa(points, totalUnits) < 12 && unitsRequested > 14) || (getGpa(points, totalUnits) < 16 && unitsRequested > 16)
+                || (unitsRequested > 20))
+            throw new EnrollmentRulesViolationException(String.format("Number of units (%d) requested does not match GPA of %f",
+                    unitsRequested, getGpa(points, totalUnits)));
         for (CSE o : courses)
             s.takeCourse(o.getCourse(), o.getSection());
     }
@@ -41,7 +43,8 @@ public class EnrollCtrl {
             for (CSE object2 : courses) {
                 if (object1 == object2) continue;
                 if (object1.getCourse().equals(object2.getCourse()))
-                    throw new EnrollmentRulesViolationException(String.format("%s is requested to be taken twice", object1.getCourse().getName()));
+                    throw new EnrollmentRulesViolationException(String.format("%s is requested to be taken twice",
+                            object1.getCourse().getName()));
             }
         }
     }
@@ -51,7 +54,8 @@ public class EnrollCtrl {
             for (CSE object2 : courses) {
                 if (object1 == object2) continue;
                 if (object1.getExamTime().equals(object2.getExamTime()))
-                    throw new EnrollmentRulesViolationException(String.format("Two offerings %s and %s have the same exam time", object1, object2));
+                    throw new EnrollmentRulesViolationException(String.format("Two offerings %s and %s have the same exam time",
+                            object1, object2));
             }
         }
     }
@@ -61,13 +65,15 @@ public class EnrollCtrl {
             for (Map.Entry<Term, Map<Course, Double>> tr : transcript.entrySet()) {
                 for (Map.Entry<Course, Double> r : tr.getValue().entrySet()) {
                     if (r.getKey().equals(object.getCourse()) && r.getValue() >= 10)
-                        throw new EnrollmentRulesViolationException(String.format("The student has already passed %s", object.getCourse().getName()));
+                        throw new EnrollmentRulesViolationException(String.format("The student has already passed %s",
+                                object.getCourse().getName()));
                 }
             }
         }
     }
 
-    private void checkPrerequisitesPassed(List<CSE> courses, Map<Term, Map<Course, Double>> transcript) throws EnrollmentRulesViolationException {
+    private void checkPrerequisitesPassed(List<CSE> courses, Map<Term, Map<Course, Double>> transcript)
+            throws EnrollmentRulesViolationException {
         for (CSE object : courses) {
             List<Course> prereqs = object.getCourse().getPrerequisites();
 
@@ -78,7 +84,8 @@ public class EnrollCtrl {
                         if (r.getKey().equals(pre) && r.getValue() >= 10) continue nextPre;
                     }
                 }
-                throw new EnrollmentRulesViolationException(String.format("The student has not passed %s as a prerequisite of %s", pre.getName(), object.getCourse().getName()));
+                throw new EnrollmentRulesViolationException(String.format("The student has not passed %s as a prerequisite of %s",
+                        pre.getName(), object.getCourse().getName()));
             }
         }
     }
