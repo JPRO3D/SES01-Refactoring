@@ -29,9 +29,9 @@ public class EnrollCtrl {
                 totalUnits += r.getKey().getUnits();
             }
         }
-        double gpa = points / totalUnits;
-        if ((gpa < 12 && unitsRequested > 14) || (gpa < 16 && unitsRequested > 16) || (unitsRequested > 20))
-            throw new EnrollmentRulesViolationException(String.format("Number of units (%d) requested does not match GPA of %f", unitsRequested, gpa));
+
+        if ((getGpa(points, totalUnits) < 12 && unitsRequested > 14) || (getGpa(points, totalUnits) < 16 && unitsRequested > 16) || (unitsRequested > 20))
+            throw new EnrollmentRulesViolationException(String.format("Number of units (%d) requested does not match GPA of %f", unitsRequested, getGpa(points, totalUnits)));
         for (CSE o : courses)
             s.takeCourse(o.getCourse(), o.getSection());
     }
@@ -81,5 +81,9 @@ public class EnrollCtrl {
                 throw new EnrollmentRulesViolationException(String.format("The student has not passed %s as a prerequisite of %s", pre.getName(), object.getCourse().getName()));
             }
         }
+    }
+
+    private double getGpa(double points, int totalUnits) {
+        return points / totalUnits;
     }
 }
