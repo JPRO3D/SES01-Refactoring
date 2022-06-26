@@ -17,9 +17,15 @@ public class EnrollCtrl {
 
         checkDuplicateCourse(courses);
 
-        int unitsRequested = 0;
+        checkForGPALimit(courses, transcript);
+
         for (CSE o : courses)
-            unitsRequested += o.getCourse().getUnits();
+            s.takeCourse(o.getCourse(), o.getSection());
+    }
+
+    private void checkForGPALimit(List<CSE> courses, Map<Term, Map<Course, Double>> transcript) throws EnrollmentRulesViolationException {
+        int unitsRequested = courses.stream().mapToInt(o -> o.getCourse().getUnits()).sum();
+
         double points = 0;
         int totalUnits = 0;
         for (Map.Entry<Term, Map<Course, Double>> tr : transcript.entrySet()) {
@@ -33,8 +39,6 @@ public class EnrollCtrl {
                 (gpa < 16 && unitsRequested > 16) ||
                 (unitsRequested > 20))
             throw new EnrollmentRulesViolationException(String.format("Number of units (%d) requested does not match GPA of %f", unitsRequested, gpa));
-        for (CSE o : courses)
-            s.takeCourse(o.getCourse(), o.getSection());
     }
 
     private void checkDuplicateCourse(List<CSE> courses) throws EnrollmentRulesViolationException {
